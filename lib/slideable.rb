@@ -13,13 +13,14 @@ module Slideable
 
     def grow_moves(diff_arr)
         moves = []
-        row, col = @pos[0].dup, @pos[1].dup
+        row, col = @pos[0], @pos[1]
         i = 1
         row_add, col_add = diff_arr[0], diff_arr[1]
         loop do
             new_pos = [row + (row_add * i), col + (col_add * i)]
+            break if new_pos[0] < 0 || new_pos[0] > 7 || new_pos[1] < 0 || new_pos[1] > 7
             moves << new_pos
-            break unless new_pos.nil?
+            break unless @board[new_pos].nil?
             i += 1
         end
         moves
