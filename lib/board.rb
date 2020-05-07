@@ -12,28 +12,27 @@ class Board
         (0..7).each do |row|
             (0..7).each do |col|
                 self[[row, col]] = NullPiece.instance if (2..5).include?(row)
-                self[[row, col]] = Pawn.new([row, col], self, :W) if row == 1
-                self[[row, col]] = Pawn.new([row, col], self, :B) if row == 6
-                self[[row, col]] = Rook.new([row, col], self, :W) if row == 0 && (col == 0 || col == 7)
-                self[[row, col]] = Rook.new([row, col], self, :B) if row == 7 && (col == 0 || col == 7)
-                self[[row, col]] = Bishop.new([row, col], self, :W) if row == 0 && (col == 2 || col == 5)
-                self[[row, col]] = Bishop.new([row, col], self, :B) if row == 7 && (col == 2 || col == 5)
-                self[[row, col]] = Knight.new([row, col], self, :W) if row == 0 && (col == 1 || col == 6)
-                self[[row, col]] = Knight.new([row, col], self, :B) if row == 7 && (col == 1 || col == 6)
-                self[[row, col]] = Queen.new([row, col], self, :W) if row == 0 && col == 3
-                self[[row, col]] = Queen.new([row, col], self, :B) if row == 7 && col == 3
-                self[[row, col]] = King.new([row, col], self, :W) if row == 0 && col == 4
-                self[[row, col]] = King.new([row, col], self, :B) if row == 7 && col == 4
-
+                self[[row, col]] = Pawn.new([row, col], self, :B) if row == 1
+                self[[row, col]] = Pawn.new([row, col], self, :W) if row == 6
+                self[[row, col]] = Rook.new([row, col], self, :B) if row == 0 && (col == 0 || col == 7)
+                self[[row, col]] = Rook.new([row, col], self, :W) if row == 7 && (col == 0 || col == 7)
+                self[[row, col]] = Bishop.new([row, col], self, :B) if row == 0 && (col == 2 || col == 5)
+                self[[row, col]] = Bishop.new([row, col], self, :W) if row == 7 && (col == 2 || col == 5)
+                self[[row, col]] = Knight.new([row, col], self, :B) if row == 0 && (col == 1 || col == 6)
+                self[[row, col]] = Knight.new([row, col], self, :W) if row == 7 && (col == 1 || col == 6)
+                self[[row, col]] = Queen.new([row, col], self, :B) if row == 0 && col == 3
+                self[[row, col]] = Queen.new([row, col], self, :W) if row == 7 && col == 3
+                self[[row, col]] = King.new([row, col], self, :B) if row == 0 && col == 4
+                self[[row, col]] = King.new([row, col], self, :W) if row == 7 && col == 4
             end
         end
     end
 
-    def move_piece(start_pos, end_pos)
-        raise ArgumentError.new "No piece at starting position" if self[start_pos].nil?
-        raise ArgumentError.new "Piece cannot move there" if end_pos[0] < 0 or end_pos[0] > 7 or end_pos[1] < 0 or end_pos[1] > 7 or !self[end_pos].nil?
+    def move_piece(color, start_pos, end_pos)
+        raise ArgumentError.new "No piece at starting position" if self[start_pos].is_a?(NullPiece)
+        raise ArgumentError.new "Piece cannot move there" unless valid_pos?(end_pos) && self[end_pos].color != self[start_pos].color
         self[start_pos].pos = end_pos
-        self[end_pos], self[start_pos] = self[start_pos], nil
+        self[end_pos], self[start_pos] = self[start_pos], NullPiece.instance
     end
 
     def [](pos)
@@ -45,4 +44,45 @@ class Board
         row, column = pos
         @grid[row][column] = piece
     end
+
+    def pieces
+        pieces = []
+        (0..7).each do |row|
+            (0..7).each do |col|
+                piece = self[[row, col]]
+                pieces << piece unless piece.is_a?(NullPiece)
+            end
+        end
+        pieces
+    end
+
+    def find_king(color)
+        pieces.each { |piece| return piece if piece.color == color && piece.is_a?(King)}
+    end
+
+    def move_piece!(color, start_pos, end_pos)
+        if self[start_pos].color == color && self[start_pos].moves.include?(end_pos)
+            move_piece(color, start_pos, end_pos)
+        else
+            raise ArgumentError.new
+        end
+    end
+
+    def valid_pos?(pos)
+        return false if pos[0] < 0 or pos[0] > 7 or pos[1] < 0 or pos[1] > 7
+        true
+    end
+
+    def in_check?(color)
+        opp_pieces = pieces.select {|piece| piece.color != color}
+        king_pos = find_king(color).pos
+        opp_pieces.any? {|piece| piece.moves.include?(king_pos)}
+    end
+
+    def checkmate?(color)
+        same_pieces = pieces.select {|piece| piece.color == color}
+        return true if in_check?(color) && same_pieces.any? {|piece| piece.valid_moves.length > 0}
+        false
+    end
+
 end

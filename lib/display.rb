@@ -9,11 +9,13 @@ class Display
     end
 
     def render
+        start_pos = []
+        end_pos = []
         system("clear")
         loop do
             puts "  ABCDEFGH"
             (0..7).each do |row|
-                print (row + 1).to_s + " "
+                print (8 - row).to_s + " "
                 (0..7).each do |col|
                     bg = cursor_update(row, col)
                     piece = @board[[row, col]]
@@ -27,8 +29,22 @@ class Display
                 end
                 puts
             end
-            @cursor.get_input
+            pos = @cursor.get_input
+            error = false
+            if pos
+                if @cursor.selected
+                    start_pos = pos
+                else
+                    end_pos = pos
+                    begin
+                        @board.move_piece!(@board[start_pos].color, start_pos, end_pos)
+                    rescue ArgumentError
+                        error = true
+                    end
+                end
+            end
             system("clear")
+            puts "Not a valid move" if error
         end
     end
 
@@ -45,6 +61,7 @@ class Display
             :blue
         end
     end
+
 end
 display = Display.new
 display.render
