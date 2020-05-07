@@ -1,7 +1,7 @@
 require_relative "board.rb"
 
 class Piece
-    def initialize(start_pos = nil, board, color)
+    def initialize(start_pos, board, color)
         @pos = start_pos
         @board = board
         @color = color

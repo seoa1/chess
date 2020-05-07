@@ -3,8 +3,11 @@ class NullPiece < Piece
     include Singleton
     def initialize
         @color = :G
-        @symbol = :N
     end
 
-    attr_reader :color, :symbol
+    attr_reader :color
+
+    def symbol
+        :_
+    end
 end

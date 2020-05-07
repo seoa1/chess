@@ -1,11 +1,26 @@
-require_relative "piece.rb"
+require_relative "knight.rb"
+require_relative "king.rb"
+require_relative "bishop.rb"
+require_relative "queen.rb"
+require_relative "nullpiece.rb"
+require_relative "rook.rb"
 
 class Board
     def initialize
         @grid = Array.new(8) { Array.new(8) }
-        [0,1,6,7].each do |row|
-            (0..7).each do |column|
-                @grid[row][column] = Piece.new([row, column])
+        [0..7].each do |row|
+            (0..7).each do |col|
+                self[row, col] = NullPiece.new if [2..5].include?(row)
+                self[row, col] = Pawn.new([row, col], self, :W) if row == 1
+                self[row, col] = Pawn.new([row, col], self, :B) if row == 6
+                self[row, col] = Rook.new([row, col], self, :W) if row == 0 && (col == 0 || col == 7)
+                self[row, col] = Rook.new([row, col], self, :B) if row == 7 && (col == 0 || col == 7)
+                self[row, col] = Bishop.new([row, col], self, :W) if row == 0 && (col == 2 || col == 5)
+                self[row, col] = Bishop.new([row, col], self, :B) if row == 7 && (col == 2 || col == 5)
+                self[row, col] = Knight.new([row, col], self, :W) if row == 0 && (col == 1 || col == 6)
+                self[row, col] = Knight.new([row, col], self, :B) if row == 7 && (col == 1 || col == 6)
+                self[row, col] = Queen.new([row, col], self, :W) if row == 0 && col == 3
+                self[row, col] = Queen.new([row, col], self, :B) if row == 7 && col == 3
             end
         end
     end
