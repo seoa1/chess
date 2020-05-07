@@ -6,12 +6,12 @@ class Pawn < Piece
         row = @pos[0]
         col = @pos[1]
         forward_one = row + forward_dir
-        moves << [forward_one, col] if @board[forward_one, col].is_a?(NullPiece)
-        moves << [forward_one + forward_dir, col] if @board[forward_one + forward_dir, col].is_a?(NullPiece) && at_start_row?
+        moves << [forward_one, col] if @board[[forward_one, col]].is_a?(NullPiece)
+        moves << [forward_one + forward_dir, col] if @board[[forward_one + forward_dir, col]].is_a?(NullPiece) && at_start_row?
         if @color == :W
-            moves << [forward_one, col + 1] if @board[forward_one, col + 1].color == :B
+            moves << [forward_one, col + 1] if @board[[forward_one, col + 1]].color == :B
         else
-            moves << [forward_one, col + 1] if @board[forward_one, col + 1].color == :W
+            moves << [forward_one, col + 1] if @board[[forward_one, col + 1]].color == :W
         end
         moves
     end

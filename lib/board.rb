@@ -4,23 +4,27 @@ require_relative "bishop.rb"
 require_relative "queen.rb"
 require_relative "nullpiece.rb"
 require_relative "rook.rb"
+require_relative "pawn.rb"
 
 class Board
     def initialize
         @grid = Array.new(8) { Array.new(8) }
-        [0..7].each do |row|
+        (0..7).each do |row|
             (0..7).each do |col|
-                self[row, col] = NullPiece.new if [2..5].include?(row)
-                self[row, col] = Pawn.new([row, col], self, :W) if row == 1
-                self[row, col] = Pawn.new([row, col], self, :B) if row == 6
-                self[row, col] = Rook.new([row, col], self, :W) if row == 0 && (col == 0 || col == 7)
-                self[row, col] = Rook.new([row, col], self, :B) if row == 7 && (col == 0 || col == 7)
-                self[row, col] = Bishop.new([row, col], self, :W) if row == 0 && (col == 2 || col == 5)
-                self[row, col] = Bishop.new([row, col], self, :B) if row == 7 && (col == 2 || col == 5)
-                self[row, col] = Knight.new([row, col], self, :W) if row == 0 && (col == 1 || col == 6)
-                self[row, col] = Knight.new([row, col], self, :B) if row == 7 && (col == 1 || col == 6)
-                self[row, col] = Queen.new([row, col], self, :W) if row == 0 && col == 3
-                self[row, col] = Queen.new([row, col], self, :B) if row == 7 && col == 3
+                self[[row, col]] = NullPiece.instance if (2..5).include?(row)
+                self[[row, col]] = Pawn.new([row, col], self, :W) if row == 1
+                self[[row, col]] = Pawn.new([row, col], self, :B) if row == 6
+                self[[row, col]] = Rook.new([row, col], self, :W) if row == 0 && (col == 0 || col == 7)
+                self[[row, col]] = Rook.new([row, col], self, :B) if row == 7 && (col == 0 || col == 7)
+                self[[row, col]] = Bishop.new([row, col], self, :W) if row == 0 && (col == 2 || col == 5)
+                self[[row, col]] = Bishop.new([row, col], self, :B) if row == 7 && (col == 2 || col == 5)
+                self[[row, col]] = Knight.new([row, col], self, :W) if row == 0 && (col == 1 || col == 6)
+                self[[row, col]] = Knight.new([row, col], self, :B) if row == 7 && (col == 1 || col == 6)
+                self[[row, col]] = Queen.new([row, col], self, :W) if row == 0 && col == 3
+                self[[row, col]] = Queen.new([row, col], self, :B) if row == 7 && col == 3
+                self[[row, col]] = King.new([row, col], self, :W) if row == 0 && col == 4
+                self[[row, col]] = King.new([row, col], self, :B) if row == 7 && col == 4
+
             end
         end
     end

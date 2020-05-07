@@ -1,4 +1,3 @@
-require_relative "board.rb"
 
 class Piece
     def initialize(start_pos, board, color)
