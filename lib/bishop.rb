@@ -6,4 +6,8 @@ class Bishop < Piece
     def moves
         super("diagonal")
     end
+
+    def symbol
+        :B
+    end
 end

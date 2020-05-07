@@ -18,9 +18,9 @@ module Slideable
         row_add, col_add = diff_arr[0], diff_arr[1]
         loop do
             new_pos = [row + (row_add * i), col + (col_add * i)]
-            break if new_pos[0] < 0 || new_pos[0] > 7 || new_pos[1] < 0 || new_pos[1] > 7
+            break if new_pos[0] < 0 || new_pos[0] > 7 || new_pos[1] < 0 || new_pos[1] > 7 || @board[new_pos].color == self.color
             moves << new_pos
-            break unless @board[new_pos].nil?
+            break unless @board[new_pos].is_a?(NullPiece) #move in front of moves << new_pos to prevent capturing
             i += 1
         end
         moves
