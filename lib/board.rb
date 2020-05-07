@@ -28,9 +28,11 @@ class Board
         end
     end
 
+    attr_writer :grid
+
     def move_piece(color, start_pos, end_pos)
         raise ArgumentError.new "No piece at starting position" if self[start_pos].is_a?(NullPiece)
-        raise ArgumentError.new "Piece cannot move there" unless valid_pos?(end_pos) && self[end_pos].color != self[start_pos].color
+        raise ArgumentError.new "Piece cannot move there" if !valid_pos?(end_pos) || self[end_pos].color == self[start_pos].color || !self[start_pos].valid_moves.include?(end_pos)
         self[start_pos].pos = end_pos
         self[end_pos], self[start_pos] = self[start_pos], NullPiece.instance
     end
@@ -61,11 +63,8 @@ class Board
     end
 
     def move_piece!(color, start_pos, end_pos)
-        if self[start_pos].color == color && self[start_pos].moves.include?(end_pos)
-            move_piece(color, start_pos, end_pos)
-        else
-            raise ArgumentError.new
-        end
+        self[start_pos].pos = end_pos
+        self[end_pos], self[start_pos] = self[start_pos], NullPiece.instance
     end
 
     def valid_pos?(pos)
@@ -83,6 +82,25 @@ class Board
         same_pieces = pieces.select {|piece| piece.color == color}
         return true if in_check?(color) && same_pieces.any? {|piece| piece.valid_moves.length > 0}
         false
+    end
+
+    def dup
+        board_copy = Board.new
+        new_grid = Array.new(8) { Array.new(8) }
+        (0..7).each do |row|
+            (0..7).each do |col|
+                piece = @grid[row][col]
+                unless piece.is_a?(NullPiece)
+                    new_piece = piece.dup
+                    new_piece.board = board_copy
+                    new_grid[row][col] = new_piece
+                else
+                    new_grid[row][col] = NullPiece.instance
+                end
+            end
+        end
+        board_copy.grid = new_grid
+        board_copy
     end
 
 end

@@ -37,7 +37,7 @@ class Display
                 else
                     end_pos = pos
                     begin
-                        @board.move_piece!(@board[start_pos].color, start_pos, end_pos)
+                        @board.move_piece(@board[start_pos].color, start_pos, end_pos)
                     rescue ArgumentError
                         error = true
                     end
@@ -47,6 +47,11 @@ class Display
             puts "Not a valid move" if error
         end
     end
+
+    def cursor_move
+
+    end
+
 
     def cursor_update(row, col)
         if @cursor.cursor_pos == [row, col]
