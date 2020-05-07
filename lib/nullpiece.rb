@@ -10,6 +10,6 @@ class NullPiece < Piece
     attr_reader :color
 
     def symbol
-        :_
+        :" " 
     end
 end
